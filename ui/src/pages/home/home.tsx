@@ -1,12 +1,12 @@
 import {
   Box,
   Button,
-  ButtonGroup,
   Dialog,
   DialogContent,
   DialogTitle,
   Grid,
 } from '@mui/material';
+import { ButtonGroup } from '@src/components';
 import { AppQueryDeleteProps, AppQueryPostProps } from '@src/types/api';
 import { JhApp } from '@src/types/jupyterhub';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
