@@ -70,6 +70,21 @@ const currentSortValue = atom<string>({
   default: 'Recently modified',
 });
 
+const isStartOpen = atom<boolean>({
+  key: 'isStartOpen',
+  default: false,
+});
+
+const isStopOpen = atom<boolean>({
+  key: 'isStopOpen',
+  default: false,
+});
+
+const isDeleteOpen = atom<boolean>({
+  key: 'isDeleteOpen',
+  default: false,
+});
+
 export {
   currentApp,
   currentFile,
@@ -83,4 +98,7 @@ export {
   currentServerName,
   currentSortValue,
   currentUser,
+  isDeleteOpen,
+  isStartOpen,
+  isStopOpen,
 };

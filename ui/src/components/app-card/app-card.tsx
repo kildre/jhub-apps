@@ -12,7 +12,13 @@ import { JhApp } from '@src/types/jupyterhub';
 import { API_BASE_URL } from '@src/utils/constants';
 import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { currentApp, currentNotification } from '../../store';
+import {
+  currentApp,
+  currentNotification,
+  isDeleteOpen,
+  isStartOpen,
+  isStopOpen,
+} from '../../store';
 import ContextMenu, { ContextMenuItem } from '../context-menu/context-menu';
 import './app-card.css';
 interface AppCardProps {
@@ -30,9 +36,6 @@ interface AppCardProps {
   sx?: object;
   isAppCard?: boolean; // Use this to determine if it's an app or service
   app?: JhApp;
-  onStartOpen: (isOpen: boolean) => void;
-  onStopOpen: (isOpen: boolean) => void;
-  onDeleteOpen: (isOpen: boolean) => void;
 }
 
 export const AppCard = ({
@@ -48,14 +51,14 @@ export const AppCard = ({
   serverStatus,
   isAppCard = true,
   app,
-  onStartOpen,
-  onStopOpen,
-  onDeleteOpen,
 }: AppCardProps): React.ReactElement => {
   const [appStatus, setAppStatus] = useState('');
   const [, setNotification] = useRecoilState<string | undefined>(
     currentNotification,
   );
+  const [, setIsStartOpen] = useRecoilState<boolean>(isStartOpen);
+  const [, setIsStopOpen] = useRecoilState<boolean>(isStopOpen);
+  const [, setIsDeleteOpen] = useRecoilState<boolean>(isDeleteOpen);
   const [, setCurrentApp] = useRecoilState<JhApp | undefined>(currentApp);
 
   useEffect(() => {
@@ -101,7 +104,7 @@ export const AppCard = ({
       id: 'start',
       title: 'Start',
       onClick: () => {
-        onStartOpen(true);
+        setIsStartOpen(true);
         setCurrentApp(app);
       },
       visible: true,
@@ -111,7 +114,7 @@ export const AppCard = ({
       id: 'stop',
       title: 'Stop',
       onClick: () => {
-        onStopOpen(true);
+        setIsStopOpen(true);
         setCurrentApp(app);
       },
       visible: true,
@@ -129,7 +132,7 @@ export const AppCard = ({
       id: 'delete',
       title: 'Delete',
       onClick: () => {
-        onDeleteOpen(true);
+        setIsDeleteOpen(true);
         setCurrentApp(app);
       },
       visible: true,

@@ -4,17 +4,9 @@ import AppCard from '../../../../components/app-card/app-card';
 
 interface AppsGridProps {
   apps: JhApp[];
-  onStartOpen: (isOpen: boolean) => void;
-  onStopOpen: (isOpen: boolean) => void;
-  onDeleteOpen: (isOpen: boolean) => void;
 }
 
-export const AppGrid = ({
-  apps,
-  onStartOpen,
-  onStopOpen,
-  onDeleteOpen,
-}: AppsGridProps): React.ReactElement => {
+export const AppGrid = ({ apps }: AppsGridProps): React.ReactElement => {
   return (
     <>
       {apps.map((app: JhApp) => (
@@ -32,9 +24,6 @@ export const AppGrid = ({
           isPublic={app.public}
           isShared={app.shared}
           app={app}
-          onStartOpen={onStartOpen}
-          onStopOpen={onStopOpen}
-          onDeleteOpen={onDeleteOpen}
         />
       ))}
     </>

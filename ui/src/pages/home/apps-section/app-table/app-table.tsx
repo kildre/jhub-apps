@@ -19,29 +19,30 @@ import { JhApp } from '@src/types/jupyterhub';
 import { API_BASE_URL } from '@src/utils/constants';
 import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { currentApp, currentNotification } from '../../../../store';
+import {
+  currentApp,
+  currentNotification,
+  isDeleteOpen,
+  isStartOpen,
+  isStopOpen,
+} from '../../../../store';
 import './app-table.css';
 
 // Define the props for AppTable
 interface AppTableProps {
   apps: JhApp[];
-  onStartOpen: (isOpen: boolean) => void;
-  onStopOpen: (isOpen: boolean) => void;
-  onDeleteOpen: (isOpen: boolean) => void;
 }
 
-export const AppTable = ({
-  apps,
-  onStartOpen,
-  onStopOpen,
-  onDeleteOpen,
-}: AppTableProps): React.ReactElement => {
+export const AppTable = ({ apps }: AppTableProps): React.ReactElement => {
   const [, setAppStatus] = useState('');
   const [updatedApps, setUpdatedApps] = useState<JhApp[]>(apps);
   const [, setNotification] = useRecoilState<string | undefined>(
     currentNotification,
   );
   const [, setCurrentApp] = useRecoilState<JhApp | undefined>(currentApp);
+  const [, setIsStartOpen] = useRecoilState<boolean>(isStartOpen);
+  const [, setIsStopOpen] = useRecoilState<boolean>(isStopOpen);
+  const [, setIsDeleteOpen] = useRecoilState<boolean>(isDeleteOpen);
   const serverStatus = apps.map((app) => app.status);
   useEffect(() => {
     if (!serverStatus) {
@@ -108,7 +109,7 @@ export const AppTable = ({
                     {app.status === 'Stopped' || app.status === 'Ready' ? (
                       <Button
                         onClick={() => {
-                          onStartOpen(true);
+                          setIsStartOpen(true);
                           setCurrentApp(app);
                         }}
                         color="inherit"
@@ -121,7 +122,7 @@ export const AppTable = ({
                     ) : (
                       <Button
                         onClick={() => {
-                          onStopOpen(true);
+                          setIsStopOpen(true);
                           setCurrentApp(app);
                         }}
                         color="inherit"
@@ -145,7 +146,7 @@ export const AppTable = ({
                     </Button>
                     <Button
                       onClick={() => {
-                        onDeleteOpen(true);
+                        setIsDeleteOpen(true);
                         setCurrentApp(app);
                       }}
                       color="inherit"

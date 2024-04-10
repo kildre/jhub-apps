@@ -27,9 +27,6 @@ export const ServiceGrid = ({
           username={app.username}
           isAppCard={false}
           app={app}
-          onDeleteOpen={() => {}} // This is a placeholder function
-          onStartOpen={() => {}} // This is a placeholder function
-          onStopOpen={() => {}} // This is a placeholder function
         />
       ))}
       {services.map((service: JhServiceApp) => (
@@ -44,9 +41,6 @@ export const ServiceGrid = ({
           serverStatus={service.status}
           username={service.username}
           isAppCard={false}
-          onDeleteOpen={() => {}} // This is a placeholder function
-          onStartOpen={() => {}} // This is a placeholder function
-          onStopOpen={() => {}} // This is a placeholder function
         />
       ))}
     </>
