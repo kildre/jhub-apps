@@ -22,11 +22,12 @@ import {
   getApps,
 } from '@src/utils/jupyterhub';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { SetStateAction, SyntheticEvent, useEffect, useState } from 'react';
+import { SyntheticEvent, useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import {
   currentNotification,
   currentSearchValue,
+  currentApp as defaultApp,
   currentFrameworks as defaultFrameworks,
   currentOwnershipValue as defaultOwnershipValue,
   currentSortValue as defaultSortValue,
@@ -54,7 +55,7 @@ export const AppsSection = () // {
   const [apps, setApps] = useState<JhApp[]>([]);
   const [, setAppStatus] = useState('');
   const [currentUser] = useRecoilState<UserState | undefined>(defaultUser);
-  const [currentApp, setCurrentApp] = useState<JhApp | null>(null);
+  const [currentApp] = useRecoilState<JhApp | undefined>(defaultApp);
   // const [updatedApps, setUpdatedApps] = useState<JhApp[]>(apps); // Added updatedApps state
   const [isStartOpen, setIsStartOpen] = useState(false);
   const [isStopOpen, setIsStopOpen] = useState(false);
@@ -157,7 +158,6 @@ export const AppsSection = () // {
   const handleStartRequst = async ({ id }: AppQueryPostProps) => {
     try {
       const response = await axios.post(`/server/${id}`);
-      updateStatusAfterOperation(id, 'Running'); // Fix: Pass the id and the new status as arguments
       return response;
     } catch (error) {
       console.error('There was an error!', error);
@@ -173,11 +173,6 @@ export const AppsSection = () // {
           remove,
         },
       });
-      if (remove) {
-        updateStatusAfterOperation(id, 'Deleted'); // Handle based on your logic
-      } else {
-        updateStatusAfterOperation(id, 'Ready'); // Assume or handle based on response
-      }
       return response;
     } catch (error) {
       console.error('There was an error!', error);
@@ -189,7 +184,6 @@ export const AppsSection = () // {
   const handleStopRequst = async (id: string) => {
     try {
       const response = await axios.post(`/server/${id}/stop`);
-      updateStatusAfterOperation(id, 'Ready'); // Set status to Ready after stopping
       return response;
     } catch (error) {
       console.error('There was an error!', error);
@@ -198,14 +192,6 @@ export const AppsSection = () // {
     }
   };
 
-  // Handle status update after operations
-  const updateStatusAfterOperation = (id: string, newStatus: string) => {
-    setUpdatedApps((prevApps) =>
-      prevApps.map((app) =>
-        app.id === id ? { ...app, status: newStatus } : app,
-      ),
-    );
-  };
   // Mutations
   const { mutate: startQuery } = useMutation({
     mutationFn: handleStartRequst,
@@ -285,8 +271,6 @@ export const AppsSection = () // {
     try {
       stopQuery(appId, {
         onSuccess: () => {
-          // Update the status of the app to 'Ready' when the stop operation is successful
-          updateStatusAfterOperation(appId, 'Ready');
           setIsStopOpen(false);
           queryClient.invalidateQueries({ queryKey: ['app-state'] });
         },
@@ -305,19 +289,16 @@ export const AppsSection = () // {
     }
   };
 
-  const handleStartOpen = (app: SetStateAction<null>) => {
+  const handleStartOpen = () => {
     setIsStartOpen(true);
-    setCurrentApp(app);
   };
 
-  const handleStopOpen = (app: SetStateAction<null>) => {
+  const handleStopOpen = () => {
     setIsStopOpen(true);
-    setCurrentApp(app);
   };
 
-  const handleDeleteOpen = (app: SetStateAction<null>) => {
+  const handleDeleteOpen = () => {
     setIsDeleteOpen(true);
-    setCurrentApp(app);
   };
 
   const startModalBody = (

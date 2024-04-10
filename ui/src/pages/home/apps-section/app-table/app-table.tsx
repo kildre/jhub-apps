@@ -17,17 +17,17 @@ import TableRow from '@mui/material/TableRow';
 import { StatusChip } from '@src/components';
 import { JhApp } from '@src/types/jupyterhub';
 import { API_BASE_URL } from '@src/utils/constants';
-import React, { SetStateAction, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { currentNotification } from '../../../../store';
+import { currentApp, currentNotification } from '../../../../store';
 import './app-table.css';
 
 // Define the props for AppTable
 interface AppTableProps {
   apps: JhApp[];
-  onStartOpen: (app: SetStateAction<null>) => void;
-  onStopOpen: (app: SetStateAction<null>) => void;
-  onDeleteOpen: (app: null) => void;
+  onStartOpen: (isOpen: boolean) => void;
+  onStopOpen: (isOpen: boolean) => void;
+  onDeleteOpen: (isOpen: boolean) => void;
 }
 
 export const AppTable = ({
@@ -37,12 +37,11 @@ export const AppTable = ({
   onDeleteOpen,
 }: AppTableProps): React.ReactElement => {
   const [, setAppStatus] = useState('');
-  // const [currentApp, setCurrentApp] = useState<JhApp | null>(null);
-
   const [updatedApps, setUpdatedApps] = useState<JhApp[]>(apps);
   const [, setNotification] = useRecoilState<string | undefined>(
     currentNotification,
   );
+  const [, setCurrentApp] = useRecoilState<JhApp | undefined>(currentApp);
   const serverStatus = apps.map((app) => app.status);
   useEffect(() => {
     if (!serverStatus) {
@@ -68,10 +67,6 @@ export const AppTable = ({
     return <LockRoundedIcon data-testid="LockRoundedIcon" fontSize="small" />;
   };
 
-  function setCurrentApp(app: JhApp) {
-    throw new Error('Function not implemented.');
-  }
-
   return (
     <>
       <Box sx={{ height: '100%', width: '100%' }}>
@@ -80,10 +75,10 @@ export const AppTable = ({
             <TableHead>
               <TableRow>
                 <TableCell>Name</TableCell>
-                <TableCell align="right">Status</TableCell>
-                <TableCell align="right">Created by</TableCell>
-                <TableCell align="right">Tags</TableCell>
-                <TableCell align="right">Actions</TableCell>
+                <TableCell>Status</TableCell>
+                <TableCell>Created by</TableCell>
+                <TableCell>Tags</TableCell>
+                <TableCell>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -98,22 +93,23 @@ export const AppTable = ({
                       {app.name}
                     </span>
                   </TableCell>
-                  <TableCell align="right">
+                  <TableCell>
                     <StatusChip status={app.status} />
                   </TableCell>
-                  <TableCell align="right">{app.username}</TableCell>
-                  <TableCell align="right">
+                  <TableCell>{app.username}</TableCell>
+                  <TableCell>
                     <Chip
                       label={app.framework}
                       variant="outlined"
                       size="small"
                     />
                   </TableCell>
-                  <TableCell align="right">
+                  <TableCell>
                     {app.status === 'Stopped' || app.status === 'Ready' ? (
                       <Button
                         onClick={() => {
-                          onStartOpen(app);
+                          onStartOpen(true);
+                          setCurrentApp(app);
                         }}
                         color="inherit"
                         size="small"

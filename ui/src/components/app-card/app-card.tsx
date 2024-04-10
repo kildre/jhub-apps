@@ -8,10 +8,11 @@ import CardMedia from '@mui/material/CardMedia';
 import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
 import { StatusChip } from '@src/components';
+import { JhApp } from '@src/types/jupyterhub';
 import { API_BASE_URL } from '@src/utils/constants';
 import React, { useEffect, useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { currentNotification } from '../../store';
+import { currentApp, currentNotification } from '../../store';
 import ContextMenu, { ContextMenuItem } from '../context-menu/context-menu';
 import './app-card.css';
 interface AppCardProps {
@@ -28,9 +29,10 @@ interface AppCardProps {
   serverStatus: string;
   sx?: object;
   isAppCard?: boolean; // Use this to determine if it's an app or service
-  onStartOpen: () => void;
-  onStopOpen: () => void;
-  onDeleteOpen: () => void;
+  app?: JhApp;
+  onStartOpen: (isOpen: boolean) => void;
+  onStopOpen: (isOpen: boolean) => void;
+  onDeleteOpen: (isOpen: boolean) => void;
 }
 
 export const AppCard = ({
@@ -45,6 +47,7 @@ export const AppCard = ({
   isShared,
   serverStatus,
   isAppCard = true,
+  app,
   onStartOpen,
   onStopOpen,
   onDeleteOpen,
@@ -53,6 +56,7 @@ export const AppCard = ({
   const [, setNotification] = useRecoilState<string | undefined>(
     currentNotification,
   );
+  const [, setCurrentApp] = useRecoilState<JhApp | undefined>(currentApp);
 
   useEffect(() => {
     if (!serverStatus) {
@@ -96,14 +100,20 @@ export const AppCard = ({
     {
       id: 'start',
       title: 'Start',
-      onClick: () => onStartOpen(true),
+      onClick: () => {
+        onStartOpen(true);
+        setCurrentApp(app);
+      },
       visible: true,
       disabled: serverStatus !== 'Ready',
     },
     {
       id: 'stop',
       title: 'Stop',
-      onClick: () => onStopOpen(true),
+      onClick: () => {
+        onStopOpen(true);
+        setCurrentApp(app);
+      },
       visible: true,
       disabled: serverStatus !== 'Running' || isShared,
     },
@@ -118,7 +128,10 @@ export const AppCard = ({
     {
       id: 'delete',
       title: 'Delete',
-      onClick: () => onDeleteOpen(true),
+      onClick: () => {
+        onDeleteOpen(true);
+        setCurrentApp(app);
+      },
       visible: true,
       disabled: isShared || id === '' || !isAppCard,
     },

@@ -1,7 +1,7 @@
 import { UserState } from '@src/types/user';
 import { atom } from 'recoil';
 import { AppFormInput } from './types/form';
-import { JhData } from './types/jupyterhub';
+import { JhApp, JhData } from './types/jupyterhub';
 
 const currentUser = atom<UserState | undefined>({
   key: 'currentUser',
@@ -22,6 +22,11 @@ const currentJhData = atom<JhData>({
 
 const currentNotification = atom<string | undefined>({
   key: 'currentNotification',
+  default: undefined,
+});
+
+const currentApp = atom<JhApp | undefined>({
+  key: 'currentApp',
   default: undefined,
 });
 
@@ -66,6 +71,7 @@ const currentSortValue = atom<string>({
 });
 
 export {
+  currentApp,
   currentFile,
   currentFormInput,
   currentFrameworks,

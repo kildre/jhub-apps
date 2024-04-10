@@ -1,12 +1,12 @@
 import { JhApp } from '@src/types/jupyterhub';
-import React, { SetStateAction } from 'react';
+import React from 'react';
 import AppCard from '../../../../components/app-card/app-card';
 
 interface AppsGridProps {
   apps: JhApp[];
-  onStartOpen: (app: SetStateAction<null>) => void;
-  onStopOpen: (app: SetStateAction<null>) => void;
-  onDeleteOpen: (app: null) => void;
+  onStartOpen: (isOpen: boolean) => void;
+  onStopOpen: (isOpen: boolean) => void;
+  onDeleteOpen: (isOpen: boolean) => void;
 }
 
 export const AppGrid = ({
@@ -31,9 +31,10 @@ export const AppGrid = ({
           username={app.username}
           isPublic={app.public}
           isShared={app.shared}
-          onStartOpen={() => onStartOpen(app)}
-          onStopOpen={() => onStopOpen(app)}
-          onDeleteOpen={() => onDeleteOpen(app)}
+          app={app}
+          onStartOpen={onStartOpen}
+          onStopOpen={onStopOpen}
+          onDeleteOpen={onDeleteOpen}
         />
       ))}
     </>
