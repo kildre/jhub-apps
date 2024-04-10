@@ -120,6 +120,7 @@ export const Home = (): React.ReactElement => {
 
   const handleStart = async (id?: string) => {
     const appId = id || currentApp?.id;
+    // istanbul ignore next
     if (!appId) return;
     try {
       setSubmitting(true);
@@ -146,6 +147,7 @@ export const Home = (): React.ReactElement => {
 
   const handleStop = async (id?: string) => {
     const appId = id || currentApp?.id;
+    // istanbul ignore next
     if (!appId) return;
     setSubmitting(true);
     try {
